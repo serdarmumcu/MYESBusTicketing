@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+    web:
+        build: .
+        command: tail -f requirements.txt
+        volumes: 
+            - .:/app
+        ports:
+            - "80:8000"
