@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  busticket:
+    image: serdarmumcu/django:v0.4
+    ports:
+      - 80:8000
