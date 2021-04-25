@@ -1,5 +1,6 @@
 <!doctype html>
 {% load staticfiles %}
+{% load user_tags %}
 <html>
   <head>
     <style type="text/css">
@@ -51,9 +52,15 @@
       <div class="sidenav">
         <a href="/">Home</a>
         {% if user.is_authenticated %}
-          <a href="/bus">Bus</a>
-          <a href="/driver">Driver</a>     
-          <a href="/trip">Trip</a>
+          {% if user|has_group:'BusCompany' %}
+            <a href="/bus">Bus</a>
+            <a href="/driver">Driver</a>     
+            <a href="/trip">Trip</a>
+          {% endif %}
+          {% if user|has_group:'Passenger' %}
+          <a href="/searchtrip">Search Trip</a>
+          <a href="/reservation">Reservation</a>     
+          {% endif %}
           <a href="/logout">Logout</a>
         {% endif %}
       </div>
