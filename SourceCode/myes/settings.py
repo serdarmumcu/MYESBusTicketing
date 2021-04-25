@@ -26,11 +26,10 @@ SECRET_KEY = 'hox@v)rgpt$6t7fxf$afw1eo^ig65f-4zeh6ve+rv(q#pb8&=h'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ec2-3-87-50-220.compute-1.amazonaws.com']
+ALLOWED_HOSTS = ['localhost','ec2-3-87-50-220.compute-1.amazonaws.com']
 
 
 # Application definition
-# 'crispy_forms'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -39,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'datetimewidget',
+    'crispy_forms',
     'busticket',
 ]
 
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware'
 ]
 
 ROOT_URLCONF = 'myes.urls'
@@ -125,7 +127,7 @@ STATICFILES_DIRS = [
     STATIC_DIR,
 ]
 
-# CRISPY_TEMPLATE_PACK="bootstrap4"
+CRISPY_TEMPLATE_PACK="bootstrap4"
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login'

@@ -1,0 +1,13 @@
+{% extends 'busticket/base.html' %}
+ 
+{% block title %}Update Driver Details{% endblock title %}
+ 
+{% block content %}
+<div class="col-md-12">
+    <h4>Update Driver Details</h4>  
+ <form method="POST" class="post-form" action="/driverupdate/{{driver.id}}">  
+   {% csrf_token %}  
+   {{ form.as_p }}
+   <button type="submit" class="btn btn-success btn-lg">Update</button> 
+ </form>  
+{% endblock content %}   

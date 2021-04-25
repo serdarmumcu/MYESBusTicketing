@@ -1,0 +1,13 @@
+{% extends 'busticket/base.html' %}
+ 
+{% block title %}Update Bus Details{% endblock title %}
+ 
+{% block content %}
+<div class="col-md-12">
+    <h4>Update Bus Details</h4>  
+ <form method="POST" class="post-form" action="/busupdate/{{bus.id}}">  
+   {% csrf_token %}  
+   {{ form.as_p }}
+   <button type="submit" class="btn btn-success btn-lg">Update</button> 
+ </form>  
+{% endblock content %}   

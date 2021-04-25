@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from busticket.models import Bus
-from busticket.forms import BusForm
+from busticket.models import Bus,Driver,Trip
+from busticket.forms import BusForm,DriverForm,TripForm
 from django.http import HttpResponse, HttpResponseRedirect
 
 # Create your views here.
@@ -14,29 +14,108 @@ def busnew(request):
         if form.is_valid():  
             try:  
                 form.save()  
-                return redirect('/')  
+                return HttpResponseRedirect("/bus")
             except:  
-                pass 
+                pass
+        else:
+            print(form.errors)
     else:  
         form = BusForm()  
-    return render(request,'busticket/busnew.html',{'form':form})  
+    return render(request,'busticket/buscrud/busnew.html',{'form':form})  
 def bus(request):  
     bus_list = Bus.objects.all()
-    return render(request,"busticket/bus.html",{'bus_list':bus_list})  
+    return render(request,"busticket/buscrud/bus.html",{'bus_list':bus_list})  
 def busedit(request, id):  
     bus = Bus.objects.get(id=id)  
-    return render(request,'busticket/busedit.html', {'bus':bus})  
+    form = BusForm(instance = bus)
+    return render(request,'busticket/buscrud/busedit.html', {"form":form,"bus":bus})  
 def busupdate(request, id):  
     bus = Bus.objects.get(id=id)  
     form = BusForm(request.POST, instance = bus)  
     if form.is_valid():  
         form.save()  
-        return redirect("/")  
-    return render(request, 'busticket/busedit.html', {'bus': bus})  
+        return HttpResponseRedirect("/bus")
+    else:
+        print(form.errors)
+    return render(request, 'busticket/buscrud/busedit.html', {'bus': bus})  
 def busdelete(request, id):  
     bus = Bus.objects.get(id=id)  
     bus.delete()  
-    return redirect("/")  
+    return HttpResponseRedirect("/bus")
+
+
+
+def drivernew(request):  
+    if request.method == "POST":  
+        form = DriverForm(request.POST)  
+        if form.is_valid():  
+            try:  
+                form.save()  
+                return HttpResponseRedirect("/driver")
+            except:  
+                pass
+        else:
+            print(form.errors)
+    else:  
+        form = DriverForm()  
+    return render(request,'busticket/drivercrud/drivernew.html',{'form':form})  
+def driver(request):  
+    driver_list = Driver.objects.all()
+    return render(request,"busticket/drivercrud/driver.html",{'driver_list':driver_list})  
+def driveredit(request, id):  
+    driver = Driver.objects.get(id=id)  
+    form = DriverForm(instance = driver)
+    return render(request,'busticket/drivercrud/driveredit.html', {"form":form,"driver":driver})  
+def driverupdate(request, id):  
+    driver = Driver.objects.get(id=id)  
+    form = DriverForm(request.POST, instance = driver)  
+    if form.is_valid():  
+        form.save()  
+        return HttpResponseRedirect("/driver")
+    else:
+        print(form.errors)
+    return render(request, 'busticket/drivercrud/driveredit.html', {'driver': driver})  
+def driverdelete(request, id):  
+    driver = Driver.objects.get(id=id)  
+    driver.delete()  
+    return HttpResponseRedirect("/driver")    
+
+
+
+def tripnew(request):  
+    if request.method == "POST":  
+        form = TripForm(request.POST)  
+        if form.is_valid():  
+            try:  
+                form.save()  
+                return HttpResponseRedirect("/trip")
+            except:  
+                pass
+        else:
+            print(form.errors)
+    else:  
+        form = TripForm()  
+    return render(request,'busticket/tripcrud/tripnew.html',{'form':form})  
+def trip(request):  
+    trip_list = Trip.objects.all()
+    return render(request,"busticket/tripcrud/trip.html",{'trip_list':trip_list})  
+def tripedit(request, id):  
+    trip = Trip.objects.get(id=id)  
+    form = TripForm(instance = trip)
+    return render(request,'busticket/tripcrud/tripedit.html', {"form":form,"trip":trip})  
+def tripupdate(request, id):  
+    trip = Trip.objects.get(id=id)  
+    form = TripForm(request.POST, instance = trip)  
+    if form.is_valid():  
+        form.save()  
+        return HttpResponseRedirect("/trip")
+    else:
+        print(form.errors)
+    return render(request, 'busticket/tripcrud/tripedit.html', {'trip': trip})  
+def tripdelete(request, id):  
+    trip = Trip.objects.get(id=id)  
+    trip.delete()  
+    return HttpResponseRedirect("/trip")        
 
 # def bus(request):
 #     bus_list = Bus.objects.all()
