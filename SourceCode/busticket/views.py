@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from busticket.models import Bus,Driver,Trip
 from busticket.forms import BusForm,DriverForm,TripForm
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.db.models import ProtectedError
 
 # Create your views here.
 def index(request):
@@ -40,7 +41,14 @@ def busupdate(request, id):
     return render(request, 'busticket/buscrud/busedit.html', {'bus': bus})  
 def busdelete(request, id):  
     bus = Bus.objects.get(id=id)  
-    bus.delete()  
+    try:
+        bus.delete()
+        return JsonResponse( {"error":""} )
+    except ProtectedError as e:
+        return JsonResponse( {"error":"Trip relation exists"} )
+    except Exception as e:
+        return JsonResponse( {"error":"something went wrong"} )
+    
     return HttpResponseRedirect("/bus")
 
 
@@ -77,12 +85,18 @@ def driverupdate(request, id):
     return render(request, 'busticket/drivercrud/driveredit.html', {'driver': driver})  
 def driverdelete(request, id):  
     driver = Driver.objects.get(id=id)  
-    driver.delete()  
+    try:
+        driver.delete()  
+        return JsonResponse( {"error":""} )
+    except ProtectedError as e:
+        return JsonResponse( {"error":"Trip relation exists"} )
+    except Exception as e:
+        return JsonResponse( {"error":"something went wrong"} )    
     return HttpResponseRedirect("/driver")    
 
 
 
-def tripnew(request):  
+def add_new_trip(request):  
     if request.method == "POST":  
         form = TripForm(request.POST)  
         if form.is_valid():  
@@ -96,10 +110,10 @@ def tripnew(request):
     else:  
         form = TripForm()  
     return render(request,'busticket/tripcrud/tripnew.html',{'form':form})  
-def trip(request):  
+def get_list_of_trips(request):  
     trip_list = Trip.objects.all()
     return render(request,"busticket/tripcrud/trip.html",{'trip_list':trip_list})  
-def tripedit(request, id):  
+def update_trip_details(request, id):  
     trip = Trip.objects.get(id=id)  
     form = TripForm(instance = trip)
     return render(request,'busticket/tripcrud/tripedit.html', {"form":form,"trip":trip})  
@@ -112,7 +126,7 @@ def tripupdate(request, id):
     else:
         print(form.errors)
     return render(request, 'busticket/tripcrud/tripedit.html', {'trip': trip})  
-def tripdelete(request, id):  
+def delete_trip(request, id):  
     trip = Trip.objects.get(id=id)  
     trip.delete()  
     return HttpResponseRedirect("/trip")        
