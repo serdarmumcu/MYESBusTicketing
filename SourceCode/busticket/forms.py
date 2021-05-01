@@ -5,10 +5,11 @@ from datetimewidget.widgets import DateTimeWidget
 class BusForm(forms.ModelForm):  
     class Meta:  
         model = Bus  
-        fields = ['plate_text', 'brand_name', 'status']
+        fields = ['plate_text', 'brand_name', 'status','bus_company']
         widgets = { 'plate_text': forms.TextInput(attrs={ 'class': 'form-control' }), 
             'brand_name': forms.TextInput(attrs={ 'class': 'form-control' }),
             'status': forms.CheckboxInput(attrs={ 'class': 'form-control' }),
+            'bus_company': forms.HiddenInput(attrs={ 'class': 'form-control' }),
       }
 
 class DriverForm(forms.ModelForm):  
@@ -32,6 +33,11 @@ class TripForm(forms.ModelForm):
             'to_city': forms.Select(attrs={ 'class': 'form-control' }), 
             'trip_date': DateTimeWidget(attrs={'id':"yourdatetimeid"}, usel10n = True, bootstrap_version=3), 
         }     
+
+    def __init__(self,buscompany, *args, **kwargs):
+        super(TripForm, self).__init__(*args, **kwargs)
+        self.fields["bus"].queryset = Bus.objects.filter(bus_company=buscompany)
+        self.fields["driver"].queryset = Driver.objects.filter(bus_company=buscompany)
 
 # class CreateNewBus(forms.Form):
 #     plate_text = forms.CharField(label="Plate", max_length=30)

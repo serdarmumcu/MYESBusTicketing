@@ -3,6 +3,7 @@ from busticket.models import Bus,Driver,Trip
 from busticket.forms import BusForm,DriverForm,TripForm
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.db.models import ProtectedError
+from django.contrib.auth.models import User
 
 # Create your views here.
 def index(request):
@@ -11,9 +12,12 @@ def index(request):
 
 def busnew(request):  
     if request.method == "POST":  
-        form = BusForm(request.POST)  
+        form = BusForm(request.POST)
         if form.is_valid():  
             try:  
+                user = User.objects.get(username=request.user.username)
+                form_result = form.save(commit=False)
+                form_result.bus_company = user.buscompany
                 form.save()  
                 return HttpResponseRedirect("/bus")
             except:  
@@ -24,7 +28,8 @@ def busnew(request):
         form = BusForm()  
     return render(request,'busticket/buscrud/busnew.html',{'form':form})  
 def bus(request):  
-    bus_list = Bus.objects.all()
+    user = User.objects.get(username=request.user.username)
+    bus_list = Bus.objects.filter(bus_company=user.buscompany)
     return render(request,"busticket/buscrud/bus.html",{'bus_list':bus_list})  
 def busedit(request, id):  
     bus = Bus.objects.get(id=id)  
@@ -43,7 +48,6 @@ def busdelete(request, id):
     bus = Bus.objects.get(id=id)  
     try:
         bus.delete()
-        return JsonResponse( {"error":""} )
     except ProtectedError as e:
         return JsonResponse( {"error":"Trip relation exists"} )
     except Exception as e:
@@ -58,7 +62,10 @@ def drivernew(request):
         form = DriverForm(request.POST)  
         if form.is_valid():  
             try:  
-                form.save()  
+                user = User.objects.get(username=request.user.username)
+                form_result = form.save(commit=False)
+                form_result.bus_company = user.buscompany
+                form.save()
                 return HttpResponseRedirect("/driver")
             except:  
                 pass
@@ -68,7 +75,8 @@ def drivernew(request):
         form = DriverForm()  
     return render(request,'busticket/drivercrud/drivernew.html',{'form':form})  
 def driver(request):  
-    driver_list = Driver.objects.all()
+    user = User.objects.get(username=request.user.username)
+    driver_list = Driver.objects.filter(bus_company=user.buscompany)
     return render(request,"busticket/drivercrud/driver.html",{'driver_list':driver_list})  
 def driveredit(request, id):  
     driver = Driver.objects.get(id=id)  
@@ -87,7 +95,6 @@ def driverdelete(request, id):
     driver = Driver.objects.get(id=id)  
     try:
         driver.delete()  
-        return JsonResponse( {"error":""} )
     except ProtectedError as e:
         return JsonResponse( {"error":"Trip relation exists"} )
     except Exception as e:
@@ -97,29 +104,35 @@ def driverdelete(request, id):
 
 
 def add_new_trip(request):  
+    user = User.objects.get(username=request.user.username)
     if request.method == "POST":  
-        form = TripForm(request.POST)  
+        form = TripForm(user.buscompany,request.POST)  
         if form.is_valid():  
             try:  
-                form.save()  
+                form_result = form.save(commit=False)
+                form_result.bus_company = user.buscompany
+                form.save()
                 return HttpResponseRedirect("/trip")
             except:  
                 pass
         else:
             print(form.errors)
     else:  
-        form = TripForm()  
+        form = TripForm(user.buscompany)  
     return render(request,'busticket/tripcrud/tripnew.html',{'form':form})  
 def get_list_of_trips(request):  
-    trip_list = Trip.objects.all()
+    user = User.objects.get(username=request.user.username)
+    trip_list = Trip.objects.filter(bus_company=user.buscompany)
     return render(request,"busticket/tripcrud/trip.html",{'trip_list':trip_list})  
+def tripedit(request, id):  
+    trip = Trip.objects.get(id=id)  
+    user = User.objects.get(username=request.user.username)
+    form = TripForm(user.buscompany,instance = trip)
+    return render(request,'busticket/tripcrud/tripedit.html', {"form":form,"trip":trip})  
 def update_trip_details(request, id):  
     trip = Trip.objects.get(id=id)  
-    form = TripForm(instance = trip)
-    return render(request,'busticket/tripcrud/tripedit.html', {"form":form,"trip":trip})  
-def tripupdate(request, id):  
-    trip = Trip.objects.get(id=id)  
-    form = TripForm(request.POST, instance = trip)  
+    user = User.objects.get(username=request.user.username)
+    form = TripForm(user.buscompany,request.POST, instance = trip)  
     if form.is_valid():  
         form.save()  
         return HttpResponseRedirect("/trip")
