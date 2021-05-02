@@ -9,7 +9,6 @@
   <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%">
             <thead>
                 <th><input type="checkbox" id="checkall" /></th>
-                <th>ID</th>
                 <th>Driver Name</th>
                 <th>Date of Birth</th>
                 <th>Years of Experience</th>
@@ -20,7 +19,6 @@
    {% for driver in driver_list %}  
     <tr>  
      <td><input type="checkbox" class="checkthis" /></td>
-     <td>{{ driver.id }}</td>  
      <td>{{ driver.name }}</td>  
      <td>{{ driver.date_of_birth }}</td>  
      <td>{{ driver.years_of_experience }}</td>  
