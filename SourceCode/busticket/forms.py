@@ -5,10 +5,11 @@ from datetimewidget.widgets import DateTimeWidget
 class BusForm(forms.ModelForm):  
     class Meta:  
         model = Bus  
-        fields = ['plate_text', 'brand_name', 'status','bus_company']
+        fields = ['plate_text', 'brand_name', 'status','seat_count','bus_company']
         widgets = { 'plate_text': forms.TextInput(attrs={ 'class': 'form-control' }), 
             'brand_name': forms.TextInput(attrs={ 'class': 'form-control' }),
             'status': forms.CheckboxInput(attrs={ 'class': 'form-control' }),
+            'seat_count': forms.NumberInput(attrs={ 'class': 'form-control' }),
             'bus_company': forms.HiddenInput(attrs={ 'class': 'form-control' }),
       }
 
@@ -24,7 +25,7 @@ class DriverForm(forms.ModelForm):
 class TripForm(forms.ModelForm):
     class Meta:  
         model = Trip  
-        fields = ['trip_no','bus', 'driver', 'from_city', 'to_city', 'trip_date']
+        fields = ['trip_no','bus', 'driver', 'from_city', 'to_city', 'trip_date','price']
         widgets = { 
             'trip_no': forms.TextInput(attrs={'class': 'form-control' ,'readonly': 'readonly'}), 
             'bus': forms.Select(attrs={ 'class': 'form-control' }), 
@@ -32,6 +33,7 @@ class TripForm(forms.ModelForm):
             'from_city': forms.Select(attrs={ 'class': 'form-control' }), 
             'to_city': forms.Select(attrs={ 'class': 'form-control' }), 
             'trip_date': DateTimeWidget(attrs={'id':"yourdatetimeid"}, usel10n = True, bootstrap_version=3), 
+            'price': forms.NumberInput(attrs={'class': 'form-control'}),
         }     
 
     def __init__(self,buscompany, *args, **kwargs):

@@ -14,6 +14,7 @@ class Bus(models.Model):
     plate_text = models.CharField(max_length=30,unique=True)
     brand_name = models.CharField(max_length=30,default='Mercedes Benz')
     status = models.BooleanField(default=True)
+    seat_count = models.IntegerField(default=52)
     bus_company = models.ForeignKey(BusCompany, on_delete=models.CASCADE, blank=True,null=True)
     def __str__(self):
         return self.plate_text
@@ -28,7 +29,6 @@ class Driver(models.Model):
 
 class City(models.Model):
     name = models.CharField(max_length=30,unique=True)
-
     def __str__(self):
         return self.name
 
@@ -39,6 +39,7 @@ class Trip(models.Model):
     from_city = models.ForeignKey(City, related_name='f_city', on_delete=models.CASCADE,blank=True,null=True)
     to_city = models.ForeignKey(City, related_name='t_city', on_delete=models.CASCADE,blank=True,null=True)
     trip_date = models.DateTimeField(blank=True)
+    price = models.DecimalField(max_digits=6, decimal_places=2, default=0.0)
     bus_company = models.ForeignKey(BusCompany, on_delete=models.CASCADE, editable=False,blank=True,null=True)
     class Meta:
         constraints = [
