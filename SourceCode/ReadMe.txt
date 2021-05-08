@@ -2,11 +2,12 @@ You can find and test our partial software after Iteration2 here:
 
 http://ec2-3-87-50-220.compute-1.amazonaws.com/login/
 
-Test User1: buscompany
+
+Test User for Kamil Koç Company: buscompany
 
 Password: q1w2e3r4!
 
-Test User2: buscompany2
+Test User for Ulusoy Company: buscompany2
 
 Password: q1w2e3r4!
 

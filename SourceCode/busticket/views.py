@@ -7,9 +7,11 @@ from django.contrib.auth.models import User
 
 # Create your views here.
 def index(request):
-    user = User.objects.get(username=request.user.username)
-    return render(request,'busticket/home.html',{'company_name':user.buscompany})
-
+    try:
+        user = User.objects.get(username=request.user.username)
+        return render(request,'busticket/home.html',{'company_name':user.buscompany})
+    except:
+        return HttpResponseRedirect("/login")
 
 def busnew(request):  
     if request.method == "POST":  
