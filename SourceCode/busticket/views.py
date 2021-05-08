@@ -7,7 +7,8 @@ from django.contrib.auth.models import User
 
 # Create your views here.
 def index(request):
-    return render(request,'busticket/home.html',{})
+    user = User.objects.get(username=request.user.username)
+    return render(request,'busticket/home.html',{'company_name':user.buscompany})
 
 
 def busnew(request):  

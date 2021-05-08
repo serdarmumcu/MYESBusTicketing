@@ -7,6 +7,7 @@
     <h4>Update Driver Details</h4>  
  <form method="POST" class="post-form" action="/driverupdate/{{driver.id}}">  
    {% csrf_token %}  
+   {{ form.media }}
    {{ form.as_p }}
    <button type="submit" class="btn btn-success btn-lg">Update</button> 
  </form>  
