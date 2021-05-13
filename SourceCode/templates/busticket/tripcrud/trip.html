@@ -8,7 +8,6 @@
         <div class="table-responsive">
   <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%">
             <thead>
-                <th><input type="checkbox" id="checkall" /></th>
                 <th>Trip No</th>
                 <th>Bus</th>
                 <th>Driver</th>
@@ -22,7 +21,6 @@
    <tbody>
    {% for trip in trip_list %}  
     <tr>  
-     <td><input type="checkbox" class="checkthis" /></td>
      <td>{{ trip.trip_no }}</td>  
      <td>{{ trip.bus }}</td>  
      <td>{{ trip.driver }}</td>  

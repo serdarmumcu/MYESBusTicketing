@@ -1,5 +1,5 @@
 from django import forms
-from busticket.models import City,Bus,Driver,Trip
+from busticket.models import City,Bus,Driver,Trip,Reservation
 from datetimewidget.widgets import DateTimeWidget,DateWidget
 from datetime import timedelta,datetime
 
@@ -60,7 +60,48 @@ class TripForm(forms.ModelForm):
         self.fields["bus"].queryset = Bus.objects.filter(bus_company=buscompany,status=True)
         self.fields["driver"].queryset = Driver.objects.filter(bus_company=buscompany)
 
-# class CreateNewBus(forms.Form):
-#     plate_text = forms.CharField(label="Plate", max_length=30)
-#     brand_name = forms.CharField(label="Brand", max_length=30)
-#     status = forms.BooleanField(label="Is Active")
+class ReservationForm(forms.ModelForm):
+    class Meta:  
+        model = Reservation  
+        fields = ['trip', 'seat_no','reservation_date','passenger']
+        widgets = { 
+            'trip': forms.HiddenInput(attrs={ 'class': 'form-control' }), 
+            'seat_no': forms.NumberInput(attrs={'class': 'form-control'}),
+            'reservation_date': forms.HiddenInput(attrs={ 'class': 'form-control' }),
+            'passenger': forms.HiddenInput(attrs={ 'class': 'form-control' }),
+        }     
+
+    def clean(self):
+        cleaned_data = super().clean()
+        passenger = cleaned_data.get('passenger')
+        reservationCount = Reservation.objects.filter(passenger=passenger,is_ticket=False).count()
+
+        if self.is_insert and reservationCount == 5:
+             raise forms.ValidationError('It is not allowed to make more than 5 reservation')
+
+    def __init__(self,trip,passenger,is_insert=False, *args, **kwargs):
+        super(ReservationForm, self).__init__(*args, **kwargs)
+        self.is_insert = is_insert
+        self.fields["trip"].initial = trip
+        self.fields["passenger"].initial = passenger
+
+        
+
+class SearchForm(forms.ModelForm):
+    DATE_CHOICES= [
+    ('', 'All'),
+    ('Today', 'Today'),
+    ('This Week', 'This Week'),
+    ('This Month', 'This Month'),
+    ('This Year', 'This Year'),
+    ]
+    date_choice= forms.CharField(label='When do you want to travel?', required=False, widget=forms.Select(choices=DATE_CHOICES,attrs={ 'class': 'form-control' }))
+    
+    class Meta:  
+        model = Trip  
+        fields = ['from_city', 'to_city','bus_company']
+        widgets = { 
+            'from_city': forms.Select(attrs={ 'class': 'form-control' }), 
+            'to_city': forms.Select(attrs={ 'class': 'form-control' }), 
+            'bus_company': forms.Select(attrs={ 'class': 'form-control' }), 
+        }     

@@ -1,0 +1,25 @@
+{% extends 'busticket/base.html' %}
+ 
+{% block title %}Make a Reservation{% endblock title %}
+ 
+{% block content %}
+<div class="col-md-12">
+    <h4>Make a Reservation</h4> 
+
+ <form method="POST" class="post-form" action="/reservationnew/{{ trip.id }}">  
+   {% csrf_token %}  
+   {{ form.media }}   
+   {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">Submit</button>  
+ </form>  
+ <h5>Trip Information:</h5>
+ <p>Trip No: {{ trip.trip_no }}</p>
+ <p>Bus Company: {{ trip.bus_company }}</p>
+ <p>Bus: {{ trip.bus }}</p>
+ <p>Driver: {{ trip.driver }}</p>
+ <p>From City: {{ trip.from_city }}</p>
+ <p>To City: {{ trip.to_city }}</p>
+ <p>Trip Date: {{ trip.trip_date }}</p>
+ <p>Price: {{ trip.price }}</p>
+</div> 
+{% endblock content %} 

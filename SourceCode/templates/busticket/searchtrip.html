@@ -1,0 +1,46 @@
+{% extends 'busticket/base.html' %}
+
+{% block title %}Search Trip{% endblock %}
+
+{% block content %}
+ <div class="col-md-12">
+        <form method="POST" class="post-form" action="/search/">  
+            {% csrf_token %}  
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Submit</button>  
+        </form>  
+        <div class="table-responsive">
+  <table id="searchdatatable" class="table table-striped table-bordered" width="100%">
+            <thead>
+                <th>Trip No</th>
+                <th>Bus Company</th>
+                <th>Bus</th>
+                <th>Driver</th>
+                <th>From City</th>
+                <th>To City</th>
+                <th>Trip Date</th>
+                <th>Price</th>
+                <th></th>
+             </thead>
+   <tbody>
+   {% for trip in trip_list %}  
+    <tr>  
+     <td>{{ trip.trip_no }}</td>  
+     <td>{{ trip.bus_company.name }}</td>  
+     <td>{{ trip.bus }}</td>  
+     <td>{{ trip.driver }}</td>  
+     <td>{{ trip.from_city }}</td>  
+     <td>{{ trip.to_city }}</td>  
+     <td>{{ trip.trip_date }}</td>  
+     <td>{{ trip.price }}</td>  
+     <td><span><a href="/reservationnew/{{ trip.id }}" class="btn btn-primary">Make Reservation</a></span>  </td>
+     
+    </tr>  
+   {% endfor %} 
+   </tbody>
+         
+  </table>
+        </div>
+    </div>
+{% endblock content %}
+

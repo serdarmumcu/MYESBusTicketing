@@ -8,7 +8,6 @@
         <div class="table-responsive">
   <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%">
             <thead>
-                <th><input type="checkbox" id="checkall" /></th>
                 <th>Bus Plate</th>
                 <th>Bus Brand</th>
                 <th>Bus Status</th>
@@ -19,7 +18,6 @@
    <tbody>
    {% for bus in bus_list %}  
     <tr>  
-     <td><input type="checkbox" class="checkthis" /></td>
      <td>{{ bus.plate_text }}</td>  
      <td>{{ bus.brand_name }}</td>  
      <td>{{ bus.status }}</td>  

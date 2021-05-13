@@ -1,0 +1,31 @@
+{% extends 'busticket/base.html' %}
+
+{% block title %}Purchased Tickets{% endblock %}
+
+{% block content %}
+ <div class="col-md-12">
+    <h4>Tickets</h4><span></span>  
+        <div class="table-responsive">
+  <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%">
+            <thead>
+                <th>Trip</th>
+                <th>Passenger</th>
+                <th>Seat No</th>
+                <th>Reservation Time</th>
+             </thead>
+   <tbody>
+   {% for reservation in ticket_list %}  
+    <tr>  
+     <td>{{ reservation.trip.trip_no }}</td>  
+     <td>{{ reservation.passenger }}</td>  
+     <td>{{ reservation.seat_no }}</td>  
+     <td>{{ reservation.reservation_date }}</td>  
+    </tr>  
+   {% endfor %} 
+   </tbody>
+         
+  </table>
+        </div>
+    </div>
+{% endblock content %}
+

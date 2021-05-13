@@ -1,5 +1,5 @@
 from django.contrib import admin
-from busticket.models import Bus,Trip,Driver,City,BusCompany
+from busticket.models import Bus,Trip,Driver,City,BusCompany,Reservation
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 # Register your models here.
@@ -22,3 +22,4 @@ admin.site.register(Bus)
 admin.site.register(Driver)
 admin.site.register(Trip)
 admin.site.register(BusCompany)
+admin.site.register(Reservation)

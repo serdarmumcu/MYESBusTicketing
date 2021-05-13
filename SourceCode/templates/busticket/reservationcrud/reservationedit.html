@@ -1,0 +1,24 @@
+{% extends 'busticket/base.html' %}
+ 
+{% block title %}Update Reservation Details{% endblock title %}
+ 
+{% block content %}
+<div class="col-md-12">
+    <h4>Update Reservation Details</h4>  
+ <form method="POST" class="post-form" action="/reservationupdate/{{reservation.id}}">  
+   {% csrf_token %}  
+   {{ form.media }}
+   {{ form.as_p }}
+   <button type="submit" class="btn btn-success btn-lg">Update</button> 
+ </form>  
+ <h5>Trip Information:</h5>
+ <p>Trip No: {{ form.instance.trip.trip_no }}</p>
+ <p>Bus Company: {{ form.instance.trip.bus_company }}</p>
+ <p>Bus: {{ form.instance.trip.bus }}</p>
+ <p>Driver: {{ form.instance.trip.driver }}</p>
+ <p>From City: {{ form.instance.trip.from_city }}</p>
+ <p>To City: {{ form.instance.trip.to_city }}</p>
+ <p>Trip Date: {{ form.instance.trip.trip_date }}</p>
+ <p>Price: {{ form.instance.trip.price }}</p>
+ <a href="/purchaseticket/{{ form.instance.id }}" class="btn btn-primary">Purchase Ticket</a>
+{% endblock content %}   
