@@ -10,9 +10,23 @@
    {{ form.media }}
    {{ form.as_p }}
    <button type="submit" class="btn btn-success btn-lg">Update</button> 
- </form>  
+ </form> 
+{% for item in numbers %}
+  {% if item in reservation_ids %}
+    {% if item in ticket_ids %}
+    <div class="outer-seat finalized-outerColor" id="div-inline"><div class="inner-seat finalized-innerColor">{{ item }}</div></div>
+    {% else %}
+    <div class="outer-seat selected-outerColor" id="div-inline"><div class="inner-seat selected-innerColor">{{ item }}</div></div>
+    {% endif %}
+  {% else %}
+  <div class="outer-seat" id="div-inline"><div class="inner-seat">{{ item }}</div></div>
+  {% endif %}
+  {% if item|divisibleby:4 %}
+    <br class="clearBoth" />
+  {% endif %}
+{% endfor %} 
  <h5>Trip Information:</h5>
- <p>Trip No: {{ form.instance.trip.trip_no }}</p>
+ <p>Trip No: {{ form.instance.trip.id }}</p>
  <p>Bus Company: {{ form.instance.trip.bus_company }}</p>
  <p>Bus: {{ form.instance.trip.bus }}</p>
  <p>Driver: {{ form.instance.trip.driver }}</p>
@@ -20,5 +34,5 @@
  <p>To City: {{ form.instance.trip.to_city }}</p>
  <p>Trip Date: {{ form.instance.trip.trip_date }}</p>
  <p>Price: {{ form.instance.trip.price }}</p>
- <a href="/purchaseticket/{{ form.instance.id }}" class="btn btn-primary">Purchase Ticket</a>
+ <a href="/openpurchasepage/{{ form.instance.id }}" class="btn btn-primary">Purchase Ticket</a>
 {% endblock content %}   

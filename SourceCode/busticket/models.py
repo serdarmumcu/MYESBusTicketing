@@ -1,6 +1,8 @@
 from django.db import models
 from uuid import uuid4
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator,MaxValueValidator
+
 
 # Create your models here.
 
@@ -33,7 +35,6 @@ class City(models.Model):
         return self.name
 
 class Trip(models.Model):
-    trip_no = models.UUIDField(default=uuid4,max_length=8)
     bus = models.ForeignKey(Bus, on_delete=models.PROTECT)
     driver = models.ForeignKey(Driver, on_delete=models.PROTECT,blank=True,null=True)
     from_city = models.ForeignKey(City, related_name='f_city', on_delete=models.CASCADE,blank=True,null=True)
@@ -42,7 +43,7 @@ class Trip(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2, default=0.0)
     bus_company = models.ForeignKey(BusCompany, on_delete=models.CASCADE, editable=True,blank=True,null=True)
     def __str__(self):
-        return str(self.trip_no)
+        return str(self.id)
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['bus', 'from_city','to_city'], name='unique trip')
@@ -54,13 +55,20 @@ class Passenger(models.Model):
     def __str__(self):
         return self.name
 
+class Transaction(models.Model):
+    transaction_date = models.DateTimeField(blank=True)
+    charged_value = models.DecimalField(max_digits=6, decimal_places=2, default=0.0)
+    payment_intent = models.CharField(max_length=50,default='')
+
 class Reservation(models.Model):
     trip = models.ForeignKey(Trip, on_delete=models.PROTECT,blank=True,null=True)
-    seat_no = models.IntegerField(default=1)
+    seat_no = models.IntegerField(default=1,validators=[MinValueValidator(1), MaxValueValidator(52)])
     reservation_date = models.DateTimeField(blank=True)
     passenger = models.ForeignKey(Passenger, on_delete=models.CASCADE, editable=True,blank=True,null=True)
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, editable=True,blank=True,null=True)
     is_ticket = models.BooleanField(default=False)
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['trip', 'seat_no'], name='unique seat')
         ]
+

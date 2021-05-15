@@ -4,5 +4,14 @@
 
 {% block content %}
 <h1>Home Page</h1>
-<p>You are logged in as the buscompany user of {{ company_name }} Company</p>
+{% load user_tags %}
+{% if user.is_authenticated %}
+    {% if user|has_group:'BusCompany' %}
+        <p>You are logged in as the user {{ user_name }} with buscompany role for {{ company_name }} Company</p>
+    {% endif %}
+    {% if user|has_group:'Passenger' %}
+        <p>You are logged in as the user {{ user_name }} with passenger role</p>
+    {% endif %}
+{% endif %}
+
 {% endblock %}

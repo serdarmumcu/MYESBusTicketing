@@ -1,6 +1,8 @@
 from django import forms
 from busticket.models import City,Bus,Driver,Trip,Reservation
 from datetimewidget.widgets import DateTimeWidget,DateWidget
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from datetime import timedelta,datetime
 
 
@@ -32,12 +34,12 @@ class DriverForm(forms.ModelForm):
 class TripForm(forms.ModelForm):
     class Meta:  
         model = Trip  
-        fields = ['trip_no','bus', 'driver', 'from_city', 'to_city', 'trip_date','price']
+        fields = ['id','bus', 'driver', 'from_city', 'to_city', 'trip_date','price']
         now = datetime.now()
         hours_added = timedelta(hours = 3)
         now = now + hours_added
         widgets = { 
-            'trip_no': forms.TextInput(attrs={'class': 'form-control' ,'readonly': 'readonly'}), 
+            'id': forms.TextInput(attrs={'class': 'form-control' ,'readonly': 'readonly'}), 
             'bus': forms.Select(attrs={ 'class': 'form-control' }), 
             'driver': forms.Select(attrs={ 'class': 'form-control' }), 
             'from_city': forms.Select(attrs={ 'class': 'form-control' }), 
@@ -105,3 +107,11 @@ class SearchForm(forms.ModelForm):
             'to_city': forms.Select(attrs={ 'class': 'form-control' }), 
             'bus_company': forms.Select(attrs={ 'class': 'form-control' }), 
         }     
+
+class RegisterForm(UserCreationForm):
+    name = forms.CharField(max_length=30,required=True)
+    email = forms.EmailField()
+    
+    class Meta:
+        model = User
+        fields = ["username", "email", "password1", "password2"]

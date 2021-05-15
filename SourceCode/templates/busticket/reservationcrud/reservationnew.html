@@ -12,8 +12,22 @@
    {{ form.as_p }}
   <button type="submit" class="btn btn-primary">Submit</button>  
  </form>  
+{% for item in numbers %}
+  {% if item in reservation_ids %}
+    {% if item in ticket_ids %}
+    <div class="outer-seat finalized-outerColor" id="div-inline"><div class="inner-seat finalized-innerColor">{{ item }}</div></div>
+    {% else %}
+    <div class="outer-seat selected-outerColor" id="div-inline"><div class="inner-seat selected-innerColor">{{ item }}</div></div>
+    {% endif %}
+  {% else %}
+  <div class="outer-seat" id="div-inline"><div class="inner-seat">{{ item }}</div></div>
+  {% endif %}
+  {% if item|divisibleby:4 %}
+    <br class="clearBoth" />
+  {% endif %}
+{% endfor %} 
  <h5>Trip Information:</h5>
- <p>Trip No: {{ trip.trip_no }}</p>
+ <p>Trip No: {{ trip.id }}</p>
  <p>Bus Company: {{ trip.bus_company }}</p>
  <p>Bus: {{ trip.bus }}</p>
  <p>Driver: {{ trip.driver }}</p>

@@ -8,18 +8,30 @@
         <div class="table-responsive">
   <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%">
             <thead>
-                <th>Trip</th>
+                <th>Ticket Id</th>
+                <th>Bus Company</th>
+                <th>From City</th>
+                <th>To City</th>
+                <th>Trip Date</th>
                 <th>Passenger</th>
                 <th>Seat No</th>
-                <th>Reservation Time</th>
+                <th>Transaction Time</th>
+                <th>Transaction Amount</th>
+                <th>External Payment Id</th>
              </thead>
    <tbody>
    {% for reservation in ticket_list %}  
     <tr>  
-     <td>{{ reservation.trip.trip_no }}</td>  
+     <td>{{ reservation.transaction.id }}</td>  
+     <td>{{ reservation.trip.bus_company }}</td>  
+     <td>{{ reservation.trip.from_city }}</td>  
+     <td>{{ reservation.trip.to_city }}</td>  
+     <td>{{ reservation.trip.trip_date }}</td>  
      <td>{{ reservation.passenger }}</td>  
      <td>{{ reservation.seat_no }}</td>  
-     <td>{{ reservation.reservation_date }}</td>  
+     <td>{{ reservation.transaction.transaction_date }}</td>  
+     <td>{{ reservation.transaction.charged_value }}</td>  
+     <td>{{ reservation.transaction.payment_intent }}</td>  
     </tr>  
    {% endfor %} 
    </tbody>

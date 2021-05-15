@@ -25,6 +25,9 @@ urlpatterns = [
     path('reservationedit/<int:id>',views.reservationedit),
     path('reservationupdate/<int:id>',views.reservationupdate),
     path('reservationdelete/<int:id>', views.reservationdelete), 
-    path('purchaseticket/<int:id>', views.purchaseticket), 
+    path('openpurchasepage/<int:id>', views.openpurchasepage, name="openpurchasepage"),
     path('ticket/',views.ticket),
+    path('register/',views.register),
+    path('checkout/<int:id>', views.checkout), 
+    path('thanks/<int:id>', views.thanks, name="thanks"), 
 ]

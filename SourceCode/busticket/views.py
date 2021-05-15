@@ -1,19 +1,26 @@
 from django.shortcuts import render, redirect
-from busticket.models import Bus,City,Driver,Trip,Reservation,BusCompany
-from busticket.forms import BusForm,DriverForm,TripForm,ReservationForm,SearchForm
+from busticket.models import Bus,City,Driver,Trip,Reservation,BusCompany,Passenger,Transaction
+from busticket.forms import BusForm,DriverForm,TripForm,ReservationForm,SearchForm,RegisterForm
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.db.models import ProtectedError
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User,Group
 from datetime import timedelta,datetime
-
+from django.conf import settings
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
+import stripe
+
+stripe.api_key = settings.STRIPE_PRIVATE_KEY
+
+
 def index(request):
     try:
         user = User.objects.get(username=request.user.username)
         if user.groups.name == 'BusCompany':
             return render(request,'busticket/home.html',{'company_name':user.buscompany})
         else:
-            return render(request,'busticket/home.html',{'company_name':''})
+            return render(request,'busticket/home.html',{'user_name':user.username})
     except:
         return HttpResponseRedirect("/login")
 
@@ -201,6 +208,14 @@ def search(request):
 def reservationnew(request, id):  
     trip = Trip.objects.get(id=id)
     user = User.objects.get(username=request.user.username)
+    reservation_list = Reservation.objects.filter(trip = trip)
+    ticket_list = Reservation.objects.filter(trip = trip,is_ticket=True)
+    reservation_ids = []
+    ticket_ids = []
+    for item in reservation_list:
+        reservation_ids.append(item.seat_no)
+    for ticket in ticket_list:
+        ticket_ids.append(ticket.seat_no)
     if request.method == "POST":  
         form = ReservationForm(trip,user.passenger,True,request.POST)  
         if form.is_valid():  
@@ -219,7 +234,7 @@ def reservationnew(request, id):
             print(form.errors)
     else:  
         form = ReservationForm(trip,user.passenger,False)  
-    return render(request,'busticket/reservationcrud/reservationnew.html',{'form':form,'trip':trip})  
+    return render(request,'busticket/reservationcrud/reservationnew.html',{'form':form,'trip':trip, "numbers": range(1,trip.bus.seat_count + 1), "reservation_ids": reservation_ids, "ticket_ids": ticket_ids})  
 def reservation(request):  
     user = User.objects.get(username=request.user.username)
     reservation_list = Reservation.objects.filter(passenger=user.passenger,is_ticket=False)
@@ -228,17 +243,33 @@ def reservationedit(request, id):
     reservation = Reservation.objects.get(id=id) 
     user = User.objects.get(username=request.user.username) 
     form = ReservationForm(reservation.trip,user.passenger,False,instance = reservation)
-    return render(request,'busticket/reservationcrud/reservationedit.html', {"form":form,"reservation":reservation})  
+    reservation_list = Reservation.objects.filter(trip = reservation.trip)
+    ticket_list = Reservation.objects.filter(trip = reservation.trip,is_ticket=True)
+    reservation_ids = []
+    ticket_ids = []
+    for item in reservation_list:
+        reservation_ids.append(item.seat_no)
+    for ticket in ticket_list:
+        ticket_ids.append(ticket.seat_no)
+    return render(request,'busticket/reservationcrud/reservationedit.html', {"form":form,"reservation":reservation, "numbers": range(1,reservation.trip.bus.seat_count + 1), "reservation_ids": reservation_ids, "ticket_ids": ticket_ids})  
 def reservationupdate(request, id):  
     reservation = Reservation.objects.get(id=id)  
     user = User.objects.get(username=request.user.username)
     form = ReservationForm(reservation.trip,user.passenger,False,request.POST, instance = reservation)  
+    reservation_list = Reservation.objects.filter(trip = reservation.trip)
+    ticket_list = Reservation.objects.filter(trip = reservation.trip,is_ticket=True)
+    reservation_ids = []
+    ticket_ids = []
+    for item in reservation_list:
+        reservation_ids.append(item.seat_no)
+    for ticket in ticket_list:
+        ticket_ids.append(ticket.seat_no)
     if form.is_valid():  
         form.save()  
         return HttpResponseRedirect("/reservation")
     else:
         print(form.errors)
-    return render(request, 'busticket/reservationcrud/reservationedit.html', {"form":form, 'reservation': reservation})  
+    return render(request, 'busticket/reservationcrud/reservationedit.html', {"form":form, 'reservation': reservation, "numbers": range(1,reservation.trip.bus.seat_count + 1), "reservation_ids": reservation_ids, "ticket_ids": ticket_ids})  
 def reservationdelete(request, id):  
     reservation = Reservation.objects.get(id=id)  
     try:
@@ -247,16 +278,66 @@ def reservationdelete(request, id):
         return JsonResponse( {"error":"something went wrong"} )    
     return HttpResponseRedirect("/reservation")    
 
-def purchaseticket(request, id):  
+def thanks(request,id):
+    session = stripe.checkout.Session.retrieve(request.GET.get("session_id"))
     reservation = Reservation.objects.get(id=id)  
-    try:
-        reservation.is_ticket = True
-        reservation.save()
-    except Exception as e:
-        return JsonResponse( {"error":"something went wrong"} )    
-    return HttpResponseRedirect("/reservation")    
+    reservation.is_ticket = True
+    now = datetime.now()
+    hours_added = timedelta(hours = 3)
+    now = now + hours_added
+    amount = session["amount_total"]
+    payment_intent = session["payment_intent"]
+    t = Transaction.objects.create(transaction_date=now,charged_value=amount/100,payment_intent=payment_intent)
+    reservation.transaction = t
+    reservation.save()
+    return HttpResponseRedirect("/ticket")      
+
+def openpurchasepage(request, id):  
+    reservation = Reservation.objects.get(id=id)  
+    return render(request,'busticket/payment.html', {"reservation":reservation})
+
+@csrf_exempt
+def checkout(request, id):
+    reservation = Reservation.objects.get(id=id) 
+    price = int(reservation.trip.price * 100)
+    session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[{
+            'price_data': {
+                'currency': 'usd',
+                'product_data': {
+                'name': 'Bus Ticket',
+                },
+                'unit_amount': price,
+            },
+            'quantity': 1,
+        }],
+        mode='payment',
+        success_url=request.build_absolute_uri(reverse('thanks', kwargs={'id': reservation.id})) + '?session_id={CHECKOUT_SESSION_ID}',
+        cancel_url=request.build_absolute_uri(reverse('openpurchasepage', kwargs={'id': id})),
+    )
+
+    return JsonResponse({
+        'session_id' : session.id,
+        'stripe_public_key' : settings.STRIPE_PUBLIC_KEY
+    })
 
 def ticket(request):  
     user = User.objects.get(username=request.user.username)
     ticket_list = Reservation.objects.filter(passenger=user.passenger,is_ticket=True)
     return render(request,"busticket/ticket.html",{'ticket_list':ticket_list})  
+
+def register(response):
+    if response.method == "POST":
+        form = RegisterForm(response.POST)
+        if form.is_valid():
+            name = form.cleaned_data.get('name')
+            form.save()
+            Passenger.objects.create(user=form.instance,name=name)
+            g = Group.objects.get(name='Passenger')
+            u = form.instance
+            g.user_set.add(u)
+            return redirect("/")
+    else:
+	    form = RegisterForm()
+    return render(response, "registration/registration.html", {"form":form})
