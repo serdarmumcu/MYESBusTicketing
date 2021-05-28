@@ -205,7 +205,7 @@ def search(request):
         return render(request,'busticket/searchtrip.html',{'trip_list': trip,'form':form}) 
 
 
-def reservationnew(request, id):  
+def make_reservation(request, id):  
     trip = Trip.objects.get(id=id)
     user = User.objects.get(username=request.user.username)
     reservation_list = Reservation.objects.filter(trip = trip)
@@ -235,11 +235,11 @@ def reservationnew(request, id):
     else:  
         form = ReservationForm(trip,user.passenger,False)  
     return render(request,'busticket/reservationcrud/reservationnew.html',{'form':form,'trip':trip, "numbers": range(1,trip.bus.seat_count + 1), "reservation_ids": reservation_ids, "ticket_ids": ticket_ids})  
-def reservation(request):  
+def get_list_of_reservations(request):  
     user = User.objects.get(username=request.user.username)
     reservation_list = Reservation.objects.filter(passenger=user.passenger,is_ticket=False)
     return render(request,"busticket/reservationcrud/reservation.html",{'reservation_list':reservation_list})  
-def reservationedit(request, id):  
+def update_reservation_details(request, id):  
     reservation = Reservation.objects.get(id=id) 
     user = User.objects.get(username=request.user.username) 
     form = ReservationForm(reservation.trip,user.passenger,False,instance = reservation)
@@ -252,7 +252,7 @@ def reservationedit(request, id):
     for ticket in ticket_list:
         ticket_ids.append(ticket.seat_no)
     return render(request,'busticket/reservationcrud/reservationedit.html', {"form":form,"reservation":reservation, "numbers": range(1,reservation.trip.bus.seat_count + 1), "reservation_ids": reservation_ids, "ticket_ids": ticket_ids})  
-def reservationupdate(request, id):  
+def update_reservation(request, id):  
     reservation = Reservation.objects.get(id=id)  
     user = User.objects.get(username=request.user.username)
     form = ReservationForm(reservation.trip,user.passenger,False,request.POST, instance = reservation)  
@@ -270,7 +270,7 @@ def reservationupdate(request, id):
     else:
         print(form.errors)
     return render(request, 'busticket/reservationcrud/reservationedit.html', {"form":form, 'reservation': reservation, "numbers": range(1,reservation.trip.bus.seat_count + 1), "reservation_ids": reservation_ids, "ticket_ids": ticket_ids})  
-def reservationdelete(request, id):  
+def delete_reservation(request, id):  
     reservation = Reservation.objects.get(id=id)  
     try:
         reservation.delete()
