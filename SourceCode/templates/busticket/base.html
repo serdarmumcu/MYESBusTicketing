@@ -4,6 +4,10 @@
 <html>
   <head>
     <style type="text/css">
+      .maincontainer {
+        padding-left: 160px;
+      }
+
       .sidenav {
         height: 100%;
         width: 160px;
@@ -89,7 +93,7 @@
 
     <title>{% block title %}MYES Bus Ticketing{% endblock %}</title>
   </head>
-  <body id="content", name="content">
+  <body id="content", name="content", class="maincontainer">
       <div class="sidenav">
         <a href="/">Home</a>
         {% if user.is_authenticated %}
