@@ -1,7 +1,6 @@
-You can find and test our partial software after Iteration2 here:
+You can find and test our partial software after Iteration3 here:
 
-http://ec2-3-87-50-220.compute-1.amazonaws.com/login/
-
+http://ec2-54-91-124-149.compute-1.amazonaws.com/login/
 
 Test User for Kamil Koç Company: buscompany
 
@@ -11,9 +10,17 @@ Test User for Ulusoy Company: buscompany2
 
 Password: q1w2e3r4!
 
-Our Iteration2 Artifacts can be accessed here: 
+Sample Passenger user1: passenger
 
-https://github.com/serdarmumcu/MYESBusTicketing/tree/master/Iteration2
+Password: q1w2e3r4!
+
+Sample Passenger user2: serdarmumcu
+
+Password: q1w2e3r4!
+
+Our Iteration3 Artifacts can be accessed here: 
+
+https://github.com/serdarmumcu/MYESBusTicketing/tree/master/Iteration3
 
 Our Source Code can be found here:
 
