@@ -108,6 +108,9 @@
           <a href="/reservation">Reservation</a>     
           <a href="/ticket">Ticket</a>   
           {% endif %}
+          {% if user|has_group:'Admin' %}
+          <a href="/buscompanyuser">Bus Company User</a>
+          {% endif %}
           <a href="/logout">Logout</a>
         {% endif %}
       </div>

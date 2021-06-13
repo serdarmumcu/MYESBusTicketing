@@ -1,0 +1,14 @@
+{% extends 'busticket/base.html' %}
+ 
+{% block title %}Update Bus Company User Details{% endblock title %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="col-md-12">
+    <h4>Update Bus Company User Details</h4>  
+ <form method="POST" class="post-form" action="/buscompanyuserupdate/{{bus_company.id}}">  
+   {% csrf_token %}  
+   {{ form|crispy }}
+   <button type="submit" class="btn btn-success btn-lg">Update</button> 
+ </form>  
+{% endblock content %}   

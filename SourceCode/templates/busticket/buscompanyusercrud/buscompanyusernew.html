@@ -1,0 +1,16 @@
+{% extends 'busticket/base.html' %}
+ 
+{% block title %}Create New Bus Company User{% endblock title %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="col-md-12">
+    <h4>Create Bus Company User</h4> 
+
+ <form method="POST" class="post-form" action="/buscompanyusernew/">  
+   {% csrf_token %}
+   {{ form|crispy }}
+  <button type="submit" class="btn btn-primary">Submit</button>  
+ </form>  
+</div> 
+{% endblock content %} 

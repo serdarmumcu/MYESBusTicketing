@@ -1,5 +1,5 @@
 from django import forms
-from busticket.models import City,Bus,Driver,Trip,Reservation
+from busticket.models import City,Bus,Driver,Trip,Reservation,BusCompany
 from datetimewidget.widgets import DateTimeWidget,DateWidget
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -52,9 +52,13 @@ class TripForm(forms.ModelForm):
         cleaned_data = super().clean()
         first_city = cleaned_data.get('from_city')
         second_city = cleaned_data.get('to_city')
+        price = cleaned_data.get('price')
 
         if first_city == second_city:
             raise forms.ValidationError('From city and To city selections cannot be the same')
+
+        if price == 0:
+            raise forms.ValidationError('Price should be bigger than zero')
 
 
     def __init__(self,buscompany, *args, **kwargs):
@@ -133,3 +137,23 @@ class SearchReservationsTicketsForm(forms.ModelForm):
     def __init__(self,buscompany, *args, **kwargs):
         super(SearchReservationsTicketsForm, self).__init__(*args, **kwargs)
         self.fields["trip"].queryset = Trip.objects.filter(bus_company=buscompany)
+
+class BusCompanyForm(UserCreationForm):  
+    company_name = forms.CharField(max_length=30,required=True)
+    tel_no = forms.CharField(max_length=30,required=False)
+    address = forms.CharField(max_length=300,required=False)
+    company_email = forms.EmailField(max_length=254,required=False)
+    url = forms.URLField(max_length=200,required=False)
+    
+    class Meta:
+        model = User
+        fields = ["username", "email", "password1", "password2"]
+
+    def __init__(self,buscompany, *args, **kwargs):
+        super(BusCompanyForm, self).__init__(*args, **kwargs)
+        if buscompany:
+            self.fields['company_name'].initial = buscompany.name
+            self.fields['tel_no'].initial = buscompany.tel_no
+            self.fields['address'].initial = buscompany.address
+            self.fields['company_email'].initial = buscompany.email
+            self.fields['url'].initial = buscompany.url

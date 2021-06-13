@@ -32,4 +32,9 @@ urlpatterns = [
     path('thanks/<int:id>', views.thanks, name="thanks"), 
     path('searchreservationsandtickets/',views.search_reservationsandtickets),
     path('reservationsandtickets/',views.reservationsandtickets),
+    path('buscompanyuser/',views.buscompanyuser),  
+    path('buscompanyusernew/',views.buscompanyusernew),  
+    path('buscompanyuseredit/<int:id>', views.buscompanyuseredit),  
+    path('buscompanyuserupdate/<int:id>', views.buscompanyuserupdate),  
+    path('buscompanyuserdelete/<int:id>', views.buscompanyuserdelete),
 ]

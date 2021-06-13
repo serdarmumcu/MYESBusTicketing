@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from busticket.models import Bus,City,Driver,Trip,Reservation,BusCompany,Passenger,Transaction
-from busticket.forms import BusForm,DriverForm,TripForm,ReservationForm,SearchForm,RegisterForm,SearchReservationsTicketsForm
+from busticket.forms import BusForm,DriverForm,TripForm,ReservationForm,SearchForm,RegisterForm,SearchReservationsTicketsForm,BusCompanyForm
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.db.models import ProtectedError
 from django.contrib.auth.models import User,Group
@@ -152,7 +152,7 @@ def update_trip_details(request, id):
         return HttpResponseRedirect("/trip")
     else:
         print(form.errors)
-    return render(request, 'busticket/tripcrud/tripedit.html', {'trip': trip})  
+    return render(request, 'busticket/tripcrud/tripedit.html', {"form":form,'trip': trip})  
 def delete_trip(request, id):  
     trip = Trip.objects.get(id=id)  
     try:
@@ -364,4 +364,67 @@ def reservationsandtickets(request):
 
         reservation = Reservation.objects.filter(**kwargs,trip__bus_company=user.buscompany)
         return render(request,'busticket/reservationsandtickets.html',{'ticket_list': reservation,'form':form})
+
+def buscompanyusernew(request):  
+    if request.method == "POST":  
+        form = BusCompanyForm(None,request.POST)
+        if form.is_valid():  
+            try:  
+                name = form.cleaned_data.get('company_name')
+                tel_no = form.cleaned_data.get('tel_no')
+                address = form.cleaned_data.get('address')
+                company_email = form.cleaned_data.get('company_email')
+                url = form.cleaned_data.get('url')
+                form.save()
+                BusCompany.objects.create(user=form.instance,name=name,address=address,tel_no=tel_no,url=url,email=company_email)
+                g = Group.objects.get(name='BusCompany')
+                u = form.instance
+                g.user_set.add(u)
+                return HttpResponseRedirect("/buscompanyuser")
+            except:  
+                pass
+        else:
+            print(form.errors)
+    else:  
+        form = BusCompanyForm(None)  
+    return render(request,'busticket/buscompanyusercrud/buscompanyusernew.html',{'form':form})  
+def buscompanyuser(request):  
+    buscompany_list = BusCompany.objects.filter()
+    return render(request,"busticket/buscompanyusercrud/buscompanyuser.html",{'buscompany_list':buscompany_list})  
+def buscompanyuseredit(request, id):  
+    bus_company = BusCompany.objects.get(id=id)  
+    form = BusCompanyForm(bus_company,instance = bus_company.user)
+    return render(request,'busticket/buscompanyusercrud/buscompanyuseredit.html', {"form":form,"bus_company":bus_company})  
+def buscompanyuserupdate(request, id):  
+    bus_company = BusCompany.objects.get(id=id)  
+    form = BusCompanyForm(bus_company,request.POST, instance = bus_company.user)  
+    if form.is_valid():  
+        name = form.cleaned_data.get('company_name')
+        tel_no = form.cleaned_data.get('tel_no')
+        address = form.cleaned_data.get('address')
+        company_email = form.cleaned_data.get('company_email')
+        url = form.cleaned_data.get('url')
+        form.save()
+        bus_company.name = name
+        bus_company.tel_no = tel_no
+        bus_company.address = address
+        bus_company.email = company_email
+        bus_company.url = url
+        bus_company.save()
+        return HttpResponseRedirect("/buscompanyuser")
+    else:
+        print(form.errors)
+    return render(request, 'busticket/buscompanyusercrud/buscompanyuseredit.html', {'bus_company': bus_company})  
+def buscompanyuserdelete(request, id):  
+    bus_company = BusCompany.objects.get(id=id)  
+    user = bus_company.user
+    try:
+        user.delete()
+        bus_company.delete()
+    except ProtectedError as e:
+        return JsonResponse( {"error":"A relation exists"} )
+    except Exception as e:
+        return JsonResponse( {"error":"something went wrong"} )
+    
+    return HttpResponseRedirect("/buscompanyuser")
 

@@ -9,6 +9,10 @@ from django.core.validators import MinValueValidator,MaxValueValidator
 class BusCompany(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=30,unique=True,default='Default Bus Company')
+    tel_no = models.CharField(max_length=30,default='', blank=True,null=True)
+    address = models.CharField(max_length=300,default='', blank=True,null=True)
+    email = models.EmailField(max_length=254,default='', blank=True,null=True)
+    url = models.URLField(max_length=200,default='', blank=True,null=True)
     def __str__(self):
         return self.name
 
