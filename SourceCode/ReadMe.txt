@@ -1,6 +1,10 @@
-You can find and test our partial software after Iteration3 here:
+You can find and test our first release software after Iteration4 here:
 
-http://ec2-54-91-124-149.compute-1.amazonaws.com/login/
+http://ec2-54-196-107-179.compute-1.amazonaws.com/login/
+
+Test Admin User: administrator
+
+Password: q1w2e3r4!
 
 Test User for Kamil Koç Company: buscompany
 
@@ -23,9 +27,9 @@ card #: 4242 4242 4242 4242
 Date: Any future Date
 CVC: Any 3 digit
 
-Our Iteration3 Artifacts can be accessed here: 
+Our Iteration4 Artifacts can be accessed here: 
 
-https://github.com/serdarmumcu/MYESBusTicketing/tree/master/Iteration3
+https://github.com/serdarmumcu/MYESBusTicketing/tree/master/Iteration4
 
 Our Source Code can be found here:
 
