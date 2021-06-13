@@ -43,7 +43,7 @@ class Trip(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2, default=0.0)
     bus_company = models.ForeignKey(BusCompany, on_delete=models.CASCADE, editable=True,blank=True,null=True)
     def __str__(self):
-        return str(self.id)
+        return str(self.from_city) + "-" + str(self.to_city) + "-" + str(self.trip_date)[0:10]
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['bus', 'from_city','to_city'], name='unique trip')

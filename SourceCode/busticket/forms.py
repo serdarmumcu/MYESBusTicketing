@@ -115,3 +115,21 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["username", "email", "password1", "password2"]
+
+class SearchReservationsTicketsForm(forms.ModelForm):    
+    TICKET_CHOICES= [
+    ('All', 'All'),
+    ('Ticket', 'Ticket'),
+    ('Reservation', 'Reservation'),
+    ]
+    is_ticket= forms.CharField(label='Is Ticket?', required=False, widget=forms.Select(choices=TICKET_CHOICES,attrs={ 'class': 'form-control' }))
+    class Meta:  
+        model = Reservation  
+        fields = ['trip']
+        widgets = { 
+            'trip': forms.Select(attrs={ 'class': 'form-control' }), 
+        }     
+
+    def __init__(self,buscompany, *args, **kwargs):
+        super(SearchReservationsTicketsForm, self).__init__(*args, **kwargs)
+        self.fields["trip"].queryset = Trip.objects.filter(bus_company=buscompany)

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from busticket.models import Bus,City,Driver,Trip,Reservation,BusCompany,Passenger,Transaction
-from busticket.forms import BusForm,DriverForm,TripForm,ReservationForm,SearchForm,RegisterForm
+from busticket.forms import BusForm,DriverForm,TripForm,ReservationForm,SearchForm,RegisterForm,SearchReservationsTicketsForm
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.db.models import ProtectedError
 from django.contrib.auth.models import User,Group
@@ -341,3 +341,27 @@ def register(response):
     else:
 	    form = RegisterForm()
     return render(response, "registration/registration.html", {"form":form})
+
+def search_reservationsandtickets(request):  
+    user = User.objects.get(username=request.user.username)
+    reservation = Reservation.objects.filter(trip__bus_company=user.buscompany)
+    form = SearchReservationsTicketsForm(user.buscompany)
+    return render(request,'busticket/reservationsandtickets.html',{'ticket_list': reservation,'form':form}) 
+
+def reservationsandtickets(request):  
+    user = User.objects.get(username=request.user.username)
+    form = SearchReservationsTicketsForm(user.buscompany,request.POST)  
+    if form.is_valid():
+        trip = form.cleaned_data["trip"]      
+        ticket_choice = form.cleaned_data["is_ticket"]
+        kwargs = {}
+        if trip:
+            kwargs['trip'] = trip
+        if ticket_choice == 'Ticket':
+            kwargs['is_ticket'] = True
+        elif ticket_choice == 'Reservation':
+            kwargs['is_ticket'] = False
+
+        reservation = Reservation.objects.filter(**kwargs,trip__bus_company=user.buscompany)
+        return render(request,'busticket/reservationsandtickets.html',{'ticket_list': reservation,'form':form})
+

@@ -30,4 +30,6 @@ urlpatterns = [
     path('register/',views.register),
     path('checkout/<int:id>', views.checkout), 
     path('thanks/<int:id>', views.thanks, name="thanks"), 
+    path('searchreservationsandtickets/',views.search_reservationsandtickets),
+    path('reservationsandtickets/',views.reservationsandtickets),
 ]
