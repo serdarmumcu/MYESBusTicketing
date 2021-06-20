@@ -1,6 +1,6 @@
 You can find and test our first release software after Iteration4 here:
 
-http://ec2-54-196-107-179.compute-1.amazonaws.com/login/
+http://ec2-18-232-104-29.compute-1.amazonaws.com/login/
 
 Test Admin User: administrator
 
